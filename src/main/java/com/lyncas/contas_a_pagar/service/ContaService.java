@@ -17,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,11 +38,8 @@ public class ContaService {
     }
 
     public ResponseEntity<ContaResponseDTO> cadastrarConta(@NotNull ContaRegisterDTO contaRegister, @NotNull UriComponentsBuilder uriBuilder) throws Exception{
-        Conta conta = new Conta(contaRegister.dataVencimento(),
-                                contaRegister.dataPagamento(),
-                                contaRegister.valor(),
-                                contaRegister.descricao(),
-                                contaRegister.situacao());
+
+        Conta conta = ContaRegisterDTO.convertoToConta(contaRegister);
         contaRepository.save(conta);
 
         URI uri = uriBuilder.path("/conta/{id}").buildAndExpand(conta.getId()).toUri();
@@ -55,8 +53,10 @@ public class ContaService {
             Conta conta = contaOptional.get();
             conta.setDescricao(contaRegister.descricao());
             conta.setValor(contaRegister.valor());
-            conta.setDataVencimento(contaRegister.dataVencimento());
-            conta.setDataPagamento(contaRegister.dataPagamento());
+            conta.setDataVencimento(LocalDate.parse(contaRegister.dataVencimento()));
+            if (contaRegister.dataPagamento() != null || !contaRegister.dataPagamento().isEmpty()){
+                conta.setDataPagamento(LocalDate.parse(contaRegister.dataPagamento()));
+            }
             conta.setValor(contaRegister.valor());
             conta.setSituacao(contaRegister.situacao());
 

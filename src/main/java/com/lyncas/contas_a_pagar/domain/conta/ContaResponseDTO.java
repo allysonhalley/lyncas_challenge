@@ -1,5 +1,6 @@
 package com.lyncas.contas_a_pagar.domain.conta;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
@@ -7,6 +8,8 @@ import org.springframework.data.domain.PageImpl;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 
@@ -15,8 +18,7 @@ public record ContaResponseDTO(
         @NotNull
         String id,
         @NotNull
-        Date dataVencimento,
-        Date dataPagamento,
+        String dataVencimento,
         @NotNull
         BigDecimal valor,
         @NotBlank
@@ -27,8 +29,7 @@ public record ContaResponseDTO(
         public ContaResponseDTO (Conta conta) {
                 this(
                         conta.getId(),
-                        conta.getDataVencimento(),
-                        conta.getDataPagamento(),
+                        conta.getDataVencimento().toString().formatted("dd/MM/yyyy"),
                         conta.getValor(),
                         conta.getDescricao(),
                         conta.getSituacao()
