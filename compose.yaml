@@ -1,13 +1,36 @@
-version: '3.4'
+version: "3.4"
 services:
-  postgres:
+  lyncas-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8081:8080'
+    environment:
+      - SPRING_DATASOURCE_url=jdbc:postgresql://lyncas_postgres:5432/lyncasdb
+      - SPRING_DATASOURCE_USERNAME=lyncas
+      - SPRING_DATASOURCE_PASSWORD=keypass
+    depends_on:
+      - lyncas-postgres
+    networks:
+      lyncas-net:
+    restart: on-failure
+  lyncas-postgres:
     image: 'postgres:latest'
     container_name: lyncas_postgres
     environment:
-      - 'POSTGRES_DB=lyncasdb'
-      - 'POSTGRES_PASSWORD=keypass'
-      - 'POSTGRES_USER=lyncas'
+      - POSTGRES_DB=lyncasdb
+      - POSTGRES_PASSWORD=keypass
+      - POSTGRES_USER=lyncas
     ports:
-      - '5433:5432'
+      - 5433:5432
     volumes:
       - ./postgres-db:/var/lib/postgresql/data
+    networks:
+      lyncas-net:
+
+volumes:
+  lyncas-db:
+
+networks:
+  lyncas-net:
